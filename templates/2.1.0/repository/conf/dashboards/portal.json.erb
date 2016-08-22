@@ -1,0 +1,108 @@
+{
+    "store": {
+        "types": [
+            "fs"
+        ]
+    },
+    "gadgetGeneration": {
+        "isCreateGadgetEnable": false,
+        "ignoreProviders": [
+            "rt"
+        ]
+    },
+    "authentication": {
+        "activeMethod": "<%= @authentication %>",
+        "methods": {
+            "sso": {
+                "attributes": {
+                    <%- if @identity_provider['portal'] and @identity_provider['portal']['issuer']-%>
+                    "issuer": "<%= @identity_provider['portal']['issuer'] %>",
+                    <%- else -%>
+                    "issuer": "portal",
+                    <%- end -%>
+                    <%- if @identity_provider['portal'] and @identity_provider['portal']['identity_provider_url'] -%>
+                    "identityProviderURL": "<%= @identity_provider['portal']['identity_provider_url'] %>",
+                    <%- else -%>
+                    "identityProviderURL": "https://localhost:9443/samlsso",
+                    <%- end -%>
+                    "responseSigningEnabled": false,
+                    <%- if @service_provider['portal'] and @service_provider['portal']['acs'] -%>
+                    "acs": "<%= @service_provider['portal']['acs'] %>",
+                    <%- else -%>
+                    "acs": "https://localhost:9444/portal/acs",
+                    <%- end -%>
+                    "identityAlias": "wso2carbon",
+                    "defaultNameIDPolicy": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+                    "useTenantKey": false,
+                    "isPassive": false
+                }
+            },
+            "basic": {
+                "attributes": {}
+            }
+        }
+    },
+    "authorization": {
+        <%- if @authorization['activeMethod'] -%>
+        "activeMethod": "<%= @authorization['activeMethod'] %>",
+        <%- else -%>
+        "activeMethod": "",
+        <%- end -%>
+        "methods": {
+            <%- @authorization['methods'].each do |method, attributes| -%>
+            "<%= method %>": {
+                "attributes": {
+                    "idPServer": "<%= attributes['idp_server'] %>",
+                    "dynamicClientProperties": {
+                        "callbackUrl": "<%= attributes['callback_url'] %>",
+                        "clientName": "<%= attributes['client_name'] %>",
+                        "owner": "<%= attributes['owner'] %>",
+                        "applicationType": "<%= attributes['application_type'] %>",
+                        "grantType": "<%= attributes['grant_type'] %>",
+                        "saasApp": <%= attributes['saas_app'] %>,
+                        "dynamicClientRegistrationEndPoint": "<%= attributes['dynamic_client_registration_endpoint'] %>",
+                        "tokenScope": "<%= attributes['token_scope'] %>"
+                    }
+                }
+            }
+            <%- end -%>
+        }
+    },
+    "designers": [
+        "Internal/everyone"
+    ],
+    "tenantPrefix": "/t",
+    "shareStore": false,
+    "theme": "basic",
+    "cacheTimeoutSeconds": "5",
+    "cacheSizeBytes": "1073741824",
+    "defaultDashboardRedirect": false,
+    "isCreateGadgetEnable": true,
+    "isSecureVaultEnabled": false,
+    "assets": {
+        "gadget": {
+            "fileSizeLimit": 5
+        },
+        "layout": {
+            "fileSizeLimit": 1
+        }
+    },
+    "oauth": {
+        "username": "admin",
+        "password": "admin"
+    },
+    "host": {
+        <%- if @hostname -%>
+        "hostname": "<%= @hostname %>",
+        <%- else -%>
+        "hostname": "localhost",
+        <%- end -%>
+        "port": "",
+        "protocol": ""
+    },
+    "houseKeeping": {
+        "location": "/temp/",
+        "interval": "60",
+        "maxTempFileLifeTime": "120"
+    }
+}
